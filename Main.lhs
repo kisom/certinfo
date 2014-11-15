@@ -14,14 +14,15 @@ systems problem.
 The program
 -----------
 
+> module Main where
+
 ByteStrings are used for more efficient binary data handling (i.e. the
 raw certificate file data).
 
-> module Main where
-
 > import Data.ByteString as BS
 
-Certificates are encoded in PEM format, so they'll need to decoded appropriately.
+Certificates are encoded in PEM format, so they'll need to be decoded
+appropriately.
 
 > import Data.PEM as PEM
 > import Data.X509 as X509

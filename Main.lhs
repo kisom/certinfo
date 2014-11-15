@@ -33,6 +33,7 @@ ASN.1 string.
 > import Data.ASN1.Types.String as ASN1String
 
 > import qualified Control.Monad
+> import qualified Data.Maybe as DM
 > import System.Environment as Env
 > import System.IO.Unsafe (unsafePerformIO)
 
@@ -66,7 +67,7 @@ Extracting the subject of a certificate is done by loading the
 distinguished name elements and joining them into a comma-separated
 list.
 
-> extractSubject cert = collapseSubject . filterNothings $ dnStrings
+> extractSubject cert = collapseSubject . DM.catMaybes $ dnStrings
 
 The distinguished name, being of the `Maybe` type, must return a
 `Maybe`, requiring a functor mapping.
@@ -134,11 +135,17 @@ This function is entirely too complex.
 `filterNothings` probably has a library function that does the same
 thing. It takes a list of `Maybes` and removes the `Nothings`.
 
-> filterNothings :: [Maybe a] -> [a]
-> filterNothings [] = []
-> filterNothings (x:xs) = case x of
->                              Nothing -> filterNothings xs
->                              Just v  -> v : filterNothings xs
+**Update**: there is such a function: `Data.Maybe.catMaybes`. The
+following is my original implementation of the same thing. Hoogle is
+useful!
+
+```haskell
+filterNothings :: [Maybe a] -> [a]
+filterNothings [] = []
+filterNothings (x:xs) = case x of
+                             Nothing -> filterNothings xs
+                             Just v  -> v : filterNothings xs
+```
 
 `loadCert` attempts to load a certificate from disk and parse it as an
 X.509 certificate. The `unsafePerformIO` is because I'm new to
